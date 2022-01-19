@@ -60,7 +60,7 @@ class UsuarioController extends Controller
      -tercero: una vez comprobado, buscamos el email y la contraseña, y si estas coinsiden
      -cuarto: si es asi, nos creamos un nuevo token, guardado en la tabla para que se pueda usar durante un tiempo(en nustro caso no tenemos que se caduque, asi que sirve hasta que se ha ga otro login)
      -quinto: */
-     public function logIn(Request $req){
+     public function LogIn(Request $req){
 
         $respuesta = ["status" => 1,"msg" => ""];//Usamos esto para comunicarnos con el otro lado del servidor
 
@@ -94,9 +94,9 @@ class UsuarioController extends Controller
      -primero: nos creamos un numero de 6 cifras
      -segundo: usamos la codificacion md5 ya que no queremos que se introduzcan caracteres especiales,
     ademas de que queremos que el numeor sea mas complicado de repetirse por lo que al ponerlo por una codificacion aumentamos la posibilidad de resultados*/
-    private function crearToken($trabajador){
+    private function crearToken($usuario){
 
-        $tokenAux = $trabajador->email;//Aprovechamos que el email y el id son unicos para crearnos una token unica
+        $tokenAux = $usuario->email;//Aprovechamos que el email y el id son unicos para crearnos una token unica
         $posiblesNumeros = [0,1,2,3,4,5,6,7,8,9];//Array de numeros 
         for ($i=0; $i < 6; $i++) {//Hscemos este for 6 veces para selecionar 6 numeros random
             $tokenAux .= $posiblesNumeros[array_rand($posiblesNumeros)];//Lo añadimos a un string, array rand para numero random
