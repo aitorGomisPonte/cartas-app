@@ -15,7 +15,7 @@ class CreateCollectionsTable extends Migration
     {
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
-            $table->string("nombre_collection")->uniqid();
+            $table->string("nombre_collection")->unique();
             $table->string("img_collection");
             $table->date("fecha_activacion_collection");
             $table->boolean("alta_collection");
