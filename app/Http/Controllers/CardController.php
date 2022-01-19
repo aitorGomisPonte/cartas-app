@@ -8,4 +8,5 @@ use App\Models\Carta;
 class CardController extends Controller
 {
     //
+    
 }
