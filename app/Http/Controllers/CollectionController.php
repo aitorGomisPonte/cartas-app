@@ -78,8 +78,8 @@ class CollectionController extends Controller
                     if($path == 1){
                         $pertenece = new Carta_pertenece();
                         $pertenece->collection_id = $collection->id;
-                        $pertenece->card_id = $datos->id_card;
-                        $respuesta['msg'] = "Se ha registrado la carta, con nombre: ".$datos->nombre_carta;//Nos devolbemos un mensaje para saber quien se ha guardado (util para comprobar)
+                        $pertenece->card_id = $datos->id_carta;
+                        $respuesta['msg'] = "bien ";//Nos devolbemos un mensaje para saber quien se ha guardado (util para comprobar)
                         $respuesta['status'] = 1; 
                     }else{
                         $card = new Card();

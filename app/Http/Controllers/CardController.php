@@ -68,7 +68,7 @@ class CardController extends Controller
     -Devuelve: el id de la carta  */
     private function BuscarCartaId($card){
         try {
-            $carta = Carta::where("nombre_card",$card)->first();
+            $carta = Card::where("nombre_card",$card)->first();
             $id_carta = $carta->id;
         } catch (\Exception $e) {
             $respuesta['msg'] = $e->getMessage();
