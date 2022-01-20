@@ -19,8 +19,8 @@ use App\Http\Controllers\UsuarioController;
 
 // Route::middleware('check-user')->group(function(){
     Route::prefix('usuario')->group(function(){
-     Route::put('/login',[UsuarioController::class, 'LogIn'])->withoutMiddleware("check-user");
-     Route::put('/registro',[UsuarioController::class, 'RegistroUsuario']);
+     Route::put('/login',[UsuarioController::class, 'LogIn']);//->withoutMiddleware("check-user");
+     Route::post('/registro',[UsuarioController::class, 'RegistroUsuario']);
     //  Route::get('/listar',[UsuarioController::class, 'listaEmpleados']);
     //  Route::get('/detalles',[UsuarioController::class, 'detallesEmpleado']);
     //  Route::get('/verPerfil',[UsuarioController::class, 'verPerfil'])->withoutMiddleware("check-user");

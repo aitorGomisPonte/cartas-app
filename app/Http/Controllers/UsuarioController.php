@@ -25,10 +25,10 @@ class UsuarioController extends Controller
         $datos = json_decode($datos);//Decodificamos los datos
 
         $validator = Validator::make(json_decode($req->getContent(),true),[//Este es el validator, dodne comprobamos la validez de los datos introducidos en un json
-            'name' => "required",//Obligatorio
-            'email' => "required|unique:users|email:rfc,dns",//Obligatorio, unico en la tabla de usuarios, cumple una estructura especifica (email:rfc, dns)
-            'password' => "required|regex:/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}/ ",//Obligatorio, 8 cifras mayusculas minusculas y numeros obligatorios
-            'role' => "required,Rule::in(['Particular', 'Profesional', 'Administrador'])",//Obligatorio, y que cumpla el enum
+            'nombre_usuario' => "required",//Obligatorio
+            'email_usuario' => "required|unique:usuarios|email:rfc,dns",//Obligatorio, unico en la tabla de usuarios, cumple una estructura especifica (email:rfc, dns)
+            'password_usuario' => "required|regex:/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}/ ",//Obligatorio, 8 cifras mayusculas minusculas y numeros obligatorios
+            'role_usuario' => "required",//Obligatorio, y que cumpla el enum
             
             
             ]);
@@ -40,12 +40,12 @@ class UsuarioController extends Controller
             }else{//Si no ha habido ningun fallo, hacemops la crecion del objeto y lo guardamos en la base de datos
                 try {
                     $user = new Usuario();
-                    $user->nombre_usuario = $datos->name;
-                    $user->email_usuario = $datos->email;
-                    $user->password_usuario = Hash::make($datos->password);
-                    $user->role_usuario = $datos->puesto;
+                    $user->nombre_usuario = $datos->nombre_usuario;
+                    $user->email_usuario = $datos->email_usuario;
+                    $user->password_usuario = Hash::make($datos->password_usuario);
+                    $user->role_usuario = $datos->role_usuario;
                     $user->save();
-                    $respuesta['msg'] = "Se ha registrado el nuevo usuario, con nombre: ".$datos->name;//Nos devolbemos un mensaje para saber quien se ha guardado (util para comprobar)
+                    $respuesta['msg'] = "Se ha registrado el nuevo usuario, con nombre: ".$datos->nombre_usuario;//Nos devolbemos un mensaje para saber quien se ha guardado (util para comprobar)
                     $respuesta['status'] = 1;  
                 } catch (\Exception $e) {
                     $respuesta['msg'] = $e->getMessage();
@@ -67,10 +67,10 @@ class UsuarioController extends Controller
         $datos = $req->getContent(); //Nos recibimos los datos por el body
         $datos = json_decode($datos); //Decodificamos el json para poder ver los distintos componentes
         try {//Encapsulamos las consultasal servidor por si perdemos la conexion
-            $usuario = Usuario::where("email_usuario",$datos->email)->first();//Buscamos el usuario por su email
+            $usuario = Usuario::where("email_usuario",$datos->email_usuario)->first();//Buscamos el usuario por su email
             if($usuario){ //Comprobamos que se halla encontrado un usuario
                 
-                if( Hash::make($datos->password) == $datos->password){//Si es asi comprobamos la contraseña de este 
+                if( Hash::check($datos->password_usuario, $usuario->password_usuario)){//Si es asi comprobamos la contraseña de este 
                     $token = $this->crearToken($usuario);//Si todo va bien entonces nos creamos un token usando la funcion de crear token
                     $usuario->Api_token = $token;//Nos guardamos la token en el json 
                     $usuario->save();//Guardamos el nuevo Json en la tabla
@@ -102,5 +102,29 @@ class UsuarioController extends Controller
             $tokenAux .= $posiblesNumeros[array_rand($posiblesNumeros)];//Lo añadimos a un string, array rand para numero random
         }
     return md5($tokenAux);//Encriptamos con md5 el token para no tener problams en los json o rutas 
+    }
+    public function RecuperarContraseña(Request $req){
+        $respuesta = ["status" => 1,"msg" => ""];//Usamos esto para comunicarnos con el otro lado del servidor
+
+        $datos = $req->getContent(); //Nos recibimos los datos por el body
+        $datos = json_decode($datos); //Decodificamos el json para poder ver los distintos componentes
+
+        $validator = Validator::make(json_decode($req->getContent(),true),[//Este es el validator, dodne comprobamos la validez de los datos introducidos en un json
+           
+            'email' => "required|unique:users|email:rfc,dns",//Obligatorio, unico en la tabla de usuarios, cumple una estructura especifica (email:rfc, dns)        
+            ]);
+            //Comporbamos el estado del validador
+            if($validator->fails()){
+                $respuesta['msg'] = "Ha habido un fallo con los datos introducidos";
+                $respuesta['status'] = 0;    
+                
+            }else{
+                try {
+                    $email = Usuario::where("email_usuario",$datos->email)->first();
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
+
+            }
     }
 }

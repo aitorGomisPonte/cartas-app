@@ -19,7 +19,7 @@ class CreateUsuariosTable extends Migration
             $table->string("email_usuario")->unique();
             $table->string("password_usuario");
             $table->enum("role_usuario",["Particular","Profecional","Administrador"]);
-            $table->string("Api_token");
+            $table->string("Api_token")->nullable();
             $table->timestamps();
         });
     }
