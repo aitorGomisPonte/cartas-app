@@ -103,7 +103,7 @@ class UsuarioController extends Controller
         }
     return md5($tokenAux);//Encriptamos con md5 el token para no tener problams en los json o rutas 
     }
-    public function RecuperarContraseña(Request $req){
+    public function RecuperarPassword(Request $req){
         $respuesta = ["status" => 1,"msg" => ""];//Usamos esto para comunicarnos con el otro lado del servidor
 
         $datos = $req->getContent(); //Nos recibimos los datos por el body
@@ -111,20 +111,57 @@ class UsuarioController extends Controller
 
         $validator = Validator::make(json_decode($req->getContent(),true),[//Este es el validator, dodne comprobamos la validez de los datos introducidos en un json
            
-            'email' => "required|unique:users|email:rfc,dns",//Obligatorio, unico en la tabla de usuarios, cumple una estructura especifica (email:rfc, dns)        
+            'email' => "required|email:rfc,dns",//Obligatorio, cumple una estructura especifica (email:rfc, dns)        
             ]);
             //Comporbamos el estado del validador
             if($validator->fails()){
-                $respuesta['msg'] = "Ha habido un fallo con los datos introducidos";
+                $respuesta['msg'] = "Ha habido un fallo con los datos introducidos, no se ah introduido un email correcto";
                 $respuesta['status'] = 0;    
                 
             }else{
                 try {
-                    $email = Usuario::where("email_usuario",$datos->email)->first();
-                } catch (\Throwable $th) {
-                    //throw $th;
+                    $usuario = Usuario::where("email_usuario",$datos->email_usuario)->first();
+                    if($usuario){
+                        $passNueva = $this->automaticPass(); 
+                        $usuario->password_usuario = Hash::make($passNueva);
+                        $respuesta["msg"] = "La contraseña se ha cambiado a la nueva: ".$passNueva;
+                        $respuesta["status"] = 0;
+                    }else{
+                        $respuesta["msg"] = "El email no existe dentro de la base de datos";
+                        $respuesta["status"] = 0;
+                    }
+                } catch (\Exception $e) {
+                    $respuesta['msg'] = $e->getMessage();
+                    $respuesta['status'] = 0;
                 }
-
+            return response()->json($respuesta);//Nos devolbemos una respuesta con un mensaje
             }
+    }
+    /*Creacion de la contraseña automatica */
+    private function automaticPass(){
+        $controlEx = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}/";
+        $password = "";
+        do {
+            $option = rand(1,3);
+            switch ($option) {
+                case '1'://Numbers
+                    $aux = rand(48,57);
+                    $password .= chr($aux);
+                    break;
+                case '2'://Upper case
+                    $aux = rand(65,90);
+                    $password .=chr($aux);
+                    break;
+                case '3'://Lower case
+                    $aux = rand(97,122);
+                    $password .= chr($aux);
+                    break;    
+                default://No necesitamos caracteres especiales, pero si hay algu fallo en el switch lo sabremos is estan estos presentes
+                    $aux = rand(33,46);
+                    $password .= chr($aux);
+                    break;
+            }              
+        } while((preg_match($controlEx, $password) === 0));// Comprobamos is la contraseña construida cumple con los requisitos
+    return $password;
     }
 }

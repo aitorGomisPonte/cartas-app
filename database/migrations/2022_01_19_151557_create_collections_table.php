@@ -17,8 +17,8 @@ class CreateCollectionsTable extends Migration
             $table->id();
             $table->string("nombre_collection")->unique();
             $table->string("img_collection");
-            $table->date("fecha_activacion_collection");
-            $table->boolean("alta_collection");
+            $table->date("fecha_activacion_collection")->nullable();
+            $table->boolean("alta_collection")->default(false);
             $table->timestamps();
         });
     }

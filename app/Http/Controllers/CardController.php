@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Carta;
+use App\Models\Card;
 use App\Models\Carta_pertenece;
 use App\Models\Collection;
 use Illuminate\Support\Facades\Validator;
@@ -40,18 +40,16 @@ class CardController extends Controller
                 try {
                     
                     if(!(Collection::where("id",$datos->collection)->first())){
-                        $respuesta['msg'] = "No se ha podido hacer la operacion ya qu ela colecion no existe";
+                        $respuesta['msg'] = "No se ha podido hacer la operacion ya que la colecion no existe";
                         $respuesta['status'] = 0;    
                     }else{
-                        $card = new Carta();
+                        $card = new Card();
                         $card->nombre_card = $datos->name;
                         $card->desc_card = $datos->desc;
                         $card->save();
 
-                        $id_carta = $this->BuscarCartaId($card->nombre_card);
-
                         $pertenece = new Carta_pertenece();
-                        $pertenece->card_id = $id_carta ;
+                        $pertenece->card_id = $card->id;
                         $pertenece->collection_id = $datos->collection;
                         $respuesta['msg'] = "Se ha registrado la carta, con nombre: ".$datos->name;//Nos devolbemos un mensaje para saber quien se ha guardado (util para comprobar)
                         $respuesta['status'] = 1;  

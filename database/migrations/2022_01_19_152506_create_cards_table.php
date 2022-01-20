@@ -15,11 +15,10 @@ class CreateCardsTable extends Migration
     {
         Schema::create('cards', function (Blueprint $table) {
             $table->id();
-            $table->string("nombre_card")->unique();
+            $table->string("nombre_card");
             $table->string("desc_card");
-            $table->boolean("alta_card");
-            $table->date("fecha_alta_card");
-            $table->integer("cantidad_card");
+            $table->boolean("alta_card")->default(false);
+            $table->date("fecha_alta_card")->nullable();
             $table->timestamps();
         });
     }
