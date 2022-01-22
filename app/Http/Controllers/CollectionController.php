@@ -134,4 +134,32 @@ class CollectionController extends Controller
         }
         return response()->json($respuesta);
     }
+    public function BuscarIdCollection(Request $req){
+        $respuesta = ["status" => 1,"msg" => ""];
+
+        $datos = $req->getContent();//Recibimos los datos por body
+        $datos = json_decode($datos);//Decodificamos los datos
+        if(isset($datos->nombre_collection)){
+            try {
+                $aux = Collection::where("nombre_collection",$datos->nombre_collection)->first();
+                if($aux){
+                    $respuesta ["msg"] = "El id de esta collection es: ".$aux->id;
+                    $respuesta["status"] = 1; 
+                }else{
+                    $respuesta ["msg"] = "El nombre de esta collection no existe";
+                    $respuesta["status"] = 1; 
+                }
+            } catch (\Exception $e){
+                $respuesta['msg'] = $e->getMessage();
+                $respuesta['status'] = 0;
+            }
+        }else{
+            $respuesta ["msg"] = "No se han pasado los datos correctos";
+            $respuesta["status"] = 0;
+        }   
+        return response()->json($respuesta);
+    }
+    public function PonerCartaVenta(Request $req){
+        
+    }
 }
