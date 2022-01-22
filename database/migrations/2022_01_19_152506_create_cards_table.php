@@ -19,6 +19,7 @@ class CreateCardsTable extends Migration
             $table->string("desc_card");
             $table->boolean("alta_card")->default(false);
             $table->date("fecha_alta_card")->nullable();
+            $table->boolean("enVenta")->default(false);
             $table->timestamps();
         });
     }

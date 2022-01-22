@@ -8,6 +8,7 @@ use App\Models\Carta_pertenece;
 use App\Models\Collection;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Stmt\TryCatch;
+use Carbon\Carbon;
 
 class CardController extends Controller
 {
@@ -82,8 +83,32 @@ class CardController extends Controller
 
         $datos = $req->getContent();//Recibimos los datos por body
         $datos = json_decode($datos);//Decodificamos los datos
-
-        
-
+        if(isset($datos->id_carta)){
+            try {
+                $card = Card::where("id",$datos->id_carta)->first();
+                if(($card)){
+                    if($card->alta_card){
+                        $respuesta['msg'] = "La carta ya esta dada de alta";
+                        $respuesta['status'] = 1; 
+                    }else{
+                        $card->alta_card = true;
+                        $card->fecha_alta_card = Carbon::now();
+                        $card->save();
+                        $respuesta['msg'] = "La carta se ha dado de alta";
+                        $respuesta['status'] = 2;  
+                    }
+                }else{
+                    $respuesta['msg'] = "El id de la carta no existe";
+                    $respuesta['status'] = 0;  
+                }
+            } catch (\Exception $e) {
+                $respuesta['msg'] = $e->getMessage();
+                $respuesta['status'] = 0;
+            }
+        }else{
+            $respuesta['msg'] = "No se ha enviado ningun id de la carta";
+            $respuesta['status'] = 0;
+        }
+        return response()->json($respuesta);
     }
 }

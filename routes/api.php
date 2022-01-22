@@ -34,8 +34,7 @@ use App\Http\Controllers\CollectionController;
            });
     Route::prefix('cards')->group(function(){
         Route::put('/crear',[CardController::class, 'CrearCard']);//->withoutMiddleware("check-user");
-        Route::post('/registro',[UsuarioController::class, 'RegistroUsuario']);
-        Route::get('/recuperarPass',[UsuarioController::class, 'RecuperarPassword']);
+        Route::put('/darAlta',[CardController::class, 'DarAltaCarta']);
     //  Route::get('/listar',[UsuarioController::class, 'listaEmpleados']);
     //  Route::get('/detalles',[UsuarioController::class, 'detallesEmpleado']);
     //  Route::get('/verPerfil',[UsuarioController::class, 'verPerfil'])->withoutMiddleware("check-user");
