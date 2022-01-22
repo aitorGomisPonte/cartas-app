@@ -35,6 +35,7 @@ use App\Http\Controllers\CollectionController;
     Route::prefix('cards')->group(function(){
         Route::put('/crear',[CardController::class, 'CrearCard']);//->withoutMiddleware("check-user");
         Route::put('/darAlta',[CardController::class, 'DarAltaCarta']);
+        Route::put('/asociarCarta',[CardController::class, 'AsociarCarta']);
     //  Route::get('/listar',[UsuarioController::class, 'listaEmpleados']);
     //  Route::get('/detalles',[UsuarioController::class, 'detallesEmpleado']);
     //  Route::get('/verPerfil',[UsuarioController::class, 'verPerfil'])->withoutMiddleware("check-user");

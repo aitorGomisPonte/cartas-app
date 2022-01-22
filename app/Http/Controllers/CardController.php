@@ -52,6 +52,7 @@ class CardController extends Controller
                         $pertenece = new Carta_pertenece();
                         $pertenece->card_id = $card->id;
                         $pertenece->collection_id = $datos->collection;
+                        $pertenece->save();
                         $respuesta['msg'] = "Se ha registrado la carta, con nombre: ".$datos->name;//Nos devolbemos un mensaje para saber quien se ha guardado (util para comprobar)
                         $respuesta['status'] = 1;  
                     }
@@ -67,9 +68,13 @@ class CardController extends Controller
      -primero: busca la carta dentro de la base de datos
      -segundo: una vez encontramos la carta, buscamos su id
     -Devuelve: el id de la carta  */
-    private function BuscarCartaId($card){
+    public function BuscarCartaId(Request $req){
+        $respuesta = ["status" => 1,"msg" => ""];
+
+        $datos = $req->getContent();//Recibimos los datos por body
+        $datos = json_decode($datos);//Decodificamos los datos
         try {
-            $carta = Card::where("nombre_card",$card)->first();
+            $carta = Card::where("nombre_card","like",$datos->nombre_carta)->first();
             $id_carta = $carta->id;
         } catch (\Exception $e) {
             $respuesta['msg'] = $e->getMessage();
@@ -111,4 +116,40 @@ class CardController extends Controller
         }
         return response()->json($respuesta);
     }
+    public function AsociarCarta(Request $req){
+
+        $respuesta = ["status" => 1,"msg" => ""];
+
+        $datos = $req->getContent();//Recibimos los datos por body
+        $datos = json_decode($datos);//Decodificamos los datos
+
+        $validator = Validator::make(json_decode($req->getContent(),true),[//Este es el validator, dodne comprobamos la validez de los datos introducidos en un json
+            'id_carta' => "required",//Obligatorio
+            'id_collection' => "required",//Obligatorio, y que cumpla el enum 
+            ]);
+            //Comporbamos el estado del validador
+            if($validator->fails()){
+                $respuesta['msg'] = "Ha habido un fallo con los datos introducidos";
+                $respuesta['status'] = 0;          
+            }else{
+                if((Collection::where("id",$datos->id_collection)->first())&&(Card::where("id",$datos->id_carta)->first())){
+                    if(Carta_pertenece::where("card_id",$datos->id_carta)->where("collection_id",$datos->id_collection)->first()){
+                        $respuesta['msg'] = "La carta ya pertenece a la collection";
+                        $respuesta['status'] = 0;
+                    }else{
+                        $pertenece = new Carta_pertenece();
+                        $pertenece->card_id = $datos->id_carta;
+                        $pertenece->collection_id = $datos->id_collection;
+                        $pertenece->save();
+                        $respuesta['msg'] = "La carta y la collection se han asociado correctamente";
+                        $respuesta['status'] = 1;
+                    }
+                }else{
+                    $respuesta['msg'] = "La carta o la collecion no existen";
+                    $respuesta['status'] = 0;
+                }
+            } 
+        return response()->json($respuesta);
+    }
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Card;
 use Illuminate\Http\Request;
 use App\Models\Collection;
 use App\Models\Carta_pertenece;
@@ -30,7 +31,7 @@ class CollectionController extends Controller
                           
                 }else{   
                     try {
-                        if(collection::where("id",$datos->id_carta)->first()){
+                        if(Card::where("id",$datos->id_carta)->first()){
                             $path = 1;  
                         }else{
                             $respuesta['msg'] = "La carta itroducida no existe";
@@ -74,18 +75,20 @@ class CollectionController extends Controller
                     if($path == 1){
                         $pertenece = new Carta_pertenece();
                         $pertenece->collection_id = $collection->id;
-                        $pertenece->collection_id = $datos->id_carta;
+                        $pertenece->card_id = $datos->id_carta;
+                        $pertenece->save();
                         $respuesta['msg'] = "bien ";//Nos devolbemos un mensaje para saber quien se ha guardado (util para comprobar)
                         $respuesta['status'] = 1; 
                     }else{
-                        $collection = new collection();
-                        $collection->nombre_collection = $datos->nombre_carta;
-                        $collection->desc_collection = $datos->desc_carta;
-                        $collection->save();
+                        $card = new Card();
+                        $card->nombre_card = $datos->nombre_carta;
+                        $card->desc_card = $datos->desc_carta;
+                        $card->save();
 
                         $pertenece = new Carta_pertenece();
+                        $pertenece->card_id = $card->id;
                         $pertenece->collection_id = $collection->id;
-                        $pertenece->collection_id = $collection->id;
+                        $pertenece->save();
                         $respuesta['msg'] = "Se ha registrado la carta, con nombre: ".$datos->nombre_carta;//Nos devolbemos un mensaje para saber quien se ha guardado (util para comprobar)
                         $respuesta['status'] = 1;
                     } 
