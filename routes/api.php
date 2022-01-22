@@ -37,6 +37,7 @@ use App\Http\Controllers\CollectionController;
         Route::put('/darAlta',[CardController::class, 'DarAltaCarta']);
         Route::put('/asociarCarta',[CardController::class, 'AsociarCarta']);
         Route::put('/ponerVenta',[CardController::class, 'PonerCartaVenta']);
+        Route::get('/buscarCartas',[CardController::class, 'BuscarCartasId']);
     //  Route::get('/listar',[UsuarioController::class, 'listaEmpleados']);
     //  Route::get('/detalles',[UsuarioController::class, 'detallesEmpleado']);
     //  Route::get('/verPerfil',[UsuarioController::class, 'verPerfil'])->withoutMiddleware("check-user");

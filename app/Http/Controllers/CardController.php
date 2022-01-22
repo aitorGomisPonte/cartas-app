@@ -11,6 +11,7 @@ use App\Models\Usuario;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Stmt\TryCatch;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CardController extends Controller
 {
@@ -70,19 +71,38 @@ class CardController extends Controller
      -primero: busca la carta dentro de la base de datos
      -segundo: una vez encontramos la carta, buscamos su id
     -Devuelve: el id de la carta  */
-    public function BuscarCartaId(Request $req){
+    public function BuscarCartasId(Request $req){
         $respuesta = ["status" => 1,"msg" => ""];
 
         $datos = $req->getContent();//Recibimos los datos por body
         $datos = json_decode($datos);//Decodificamos los datos
-        try {
-            $carta = Card::where("nombre_card","like",$datos->nombre_carta)->first();
-            $id_carta = $carta->id;
-        } catch (\Exception $e) {
-            $respuesta['msg'] = $e->getMessage();
-            $respuesta['status'] = 0; 
+
+        if(!(isset($datos->nombre_carta))){
+            $respuesta['msg'] = "No se han pasado los datos correctos";
+            $respuesta['status'] = 0;  
+        }else{
+            try {
+            //$cartas = Carta_venta::select("id","nombre_card")->where("nombre_card","like",$datos->nombre_carta)->orderBy("precio_venta")->get();
+                $cartas = DB::table('cards')
+                ->join('carta_ventas', 'cards.id', '=', 'carta_ventas.id_carta')
+                ->select('carta_ventas.id_carta', 'cards.nombre_card', 'carta_ventas.precio_venta')
+                ->where("cards.nombre_card","like","%".$datos->nombre_carta."%")
+                ->orderBy("precio_venta")
+                ->get();
+                if(sizeof($cartas) === 0){
+                    $respuesta['msg'] = "No existen cartas con ese nombre";
+                    $respuesta['status'] = 0;
+               }else{
+                    $respuesta['msg'] = "Los cartas son : ".$cartas;
+                    $respuesta['status'] = 0;
+                }
+            } catch (\Exception $e) {
+                $respuesta['msg'] = $e->getMessage();
+                $respuesta['status'] = 0; 
+            }
         }
-    return $id_carta;
+
+        return response()->json($respuesta);
     }
     public function DarAltaCarta(Request $req){
 
@@ -187,7 +207,7 @@ class CardController extends Controller
                              $venta->cantidad_venta = $datos->cantidad;
                              $venta->save();
                              $respuesta['msg'] = "La carta ".$card->id."se ha puesto a la venta";
-                             $respuesta['status'] = 0; 
+                             $respuesta['status'] = 1; 
 
                         }else{
                             $respuesta['msg'] = "La carta no est dada de alta";
