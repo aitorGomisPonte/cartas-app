@@ -46,11 +46,12 @@ use App\Http\Controllers\CollectionController;
     Route::prefix('collection')->group(function(){
         Route::put('/crear',[CollectionController::class, 'CrearCollection']);//->withoutMiddleware("check-user");
         Route::put('/darAlta',[CollectionController::class, 'DarAltaCollection']);
+        Route::get('/buscarNombre',[CollectionController::class, 'BuscarIdCollection']);
                 //  Route::get('/listar',[UsuarioController::class, 'listaEmpleados']);
                 //  Route::get('/detalles',[UsuarioController::class, 'detallesEmpleado']);
                 //  Route::get('/verPerfil',[UsuarioController::class, 'verPerfil'])->withoutMiddleware("check-user");
                 //  Route::post('/modificar',[UsuarioController::class, 'modificarDatos']);
                 //  Route::post('recuperar',[UsuarioController::class, 'recuperarPass'])->withoutMiddleware("check-user");
                        
-                              });                     
+        });                     
 //  });
