@@ -76,4 +76,14 @@ class CardController extends Controller
         }
     return $id_carta;
     }
+    public function DarAltaCarta(Request $req){
+
+        $respuesta = ["status" => 1,"msg" => ""];
+
+        $datos = $req->getContent();//Recibimos los datos por body
+        $datos = json_decode($datos);//Decodificamos los datos
+
+        
+
+    }
 }
