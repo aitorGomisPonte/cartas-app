@@ -22,8 +22,8 @@ use App\Http\Controllers\CollectionController;
 
 // Route::middleware('check-user')->group(function(){
     Route::prefix('usuario')->group(function(){
-        Route::put('/login',[UsuarioController::class, 'LogIn']);//->withoutMiddleware("check-user");
-        Route::post('/registro',[UsuarioController::class, 'RegistroUsuario']);
+        Route::post('/login',[UsuarioController::class, 'LogIn']);//->withoutMiddleware("check-user");
+        Route::put('/registro',[UsuarioController::class, 'RegistroUsuario']);
         Route::get('/recuperarPass',[UsuarioController::class, 'RecuperarPassword']);
     //  Route::get('/listar',[UsuarioController::class, 'listaEmpleados']);
     //  Route::get('/detalles',[UsuarioController::class, 'detallesEmpleado']);
@@ -44,8 +44,7 @@ use App\Http\Controllers\CollectionController;
                   }); 
     Route::prefix('collection')->group(function(){
         Route::put('/crear',[CollectionController::class, 'CrearCollection']);//->withoutMiddleware("check-user");
-        Route::post('/registro',[UsuarioController::class, 'RegistroUsuario']);
-        Route::get('/recuperarPass',[UsuarioController::class, 'RecuperarPassword']);
+        Route::put('/darAlta',[CollectionController::class, 'DarAltaCollection']);
                 //  Route::get('/listar',[UsuarioController::class, 'listaEmpleados']);
                 //  Route::get('/detalles',[UsuarioController::class, 'detallesEmpleado']);
                 //  Route::get('/verPerfil',[UsuarioController::class, 'verPerfil'])->withoutMiddleware("check-user");

@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Collection;
 use App\Models\Carta_pertenece;
-use App\Models\Card;
-
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class CollectionController extends Controller
@@ -31,7 +30,7 @@ class CollectionController extends Controller
                           
                 }else{   
                     try {
-                        if(Card::where("id",$datos->id_carta)->first()){
+                        if(collection::where("id",$datos->id_carta)->first()){
                             $path = 1;  
                         }else{
                             $respuesta['msg'] = "La carta itroducida no existe";
@@ -65,12 +64,9 @@ class CollectionController extends Controller
                         $respuesta['status'] = 0; 
                     }  
                 }
-
         }
-
         if($path != 0){
             try {
-                      
                     $collection = new Collection();
                     $collection->nombre_collection = $datos->nombre_collection;
                     $collection->img_collection = $datos->img_collection;
@@ -78,28 +74,61 @@ class CollectionController extends Controller
                     if($path == 1){
                         $pertenece = new Carta_pertenece();
                         $pertenece->collection_id = $collection->id;
-                        $pertenece->card_id = $datos->id_carta;
+                        $pertenece->collection_id = $datos->id_carta;
                         $respuesta['msg'] = "bien ";//Nos devolbemos un mensaje para saber quien se ha guardado (util para comprobar)
                         $respuesta['status'] = 1; 
                     }else{
-                        $card = new Card();
-                        $card->nombre_card = $datos->nombre_carta;
-                        $card->desc_card = $datos->desc_carta;
-                        $card->save();
+                        $collection = new collection();
+                        $collection->nombre_collection = $datos->nombre_carta;
+                        $collection->desc_collection = $datos->desc_carta;
+                        $collection->save();
 
                         $pertenece = new Carta_pertenece();
-                        $pertenece->card_id = $card->id;
+                        $pertenece->collection_id = $collection->id;
                         $pertenece->collection_id = $collection->id;
                         $respuesta['msg'] = "Se ha registrado la carta, con nombre: ".$datos->nombre_carta;//Nos devolbemos un mensaje para saber quien se ha guardado (util para comprobar)
                         $respuesta['status'] = 1;
-
                     } 
             } catch (\Exception $e) {
                 $respuesta['msg'] = $e->getMessage();
                 $respuesta['status'] = 0; 
             }
+        }      
+        return response()->json($respuesta);
+    }
+
+    public function DarAltaCollection(Request $req){
+
+        $respuesta = ["status" => 1,"msg" => ""];
+
+        $datos = $req->getContent();//Recibimos los datos por body
+        $datos = json_decode($datos);//Decodificamos los datos
+        if(isset($datos->id_collection)){
+            try {
+                $collection = Collection::where("id",$datos->id_collection)->first();
+                if($collection){
+                    if($collection->alta_collection){
+                        $respuesta['msg'] = "La collection ya esta dada de alta";
+                        $respuesta['status'] = 1; 
+                    }else{
+                        $collection->alta_collection = true;
+                        $collection->fecha_activacion_collection = Carbon::now();
+                        $collection->save();
+                        $respuesta['msg'] = "La collection se ha dado de alta";
+                        $respuesta['status'] = 2;  
+                    }
+                }else{
+                    $respuesta['msg'] = "El id de la collection no existe";
+                    $respuesta['status'] = 0;  
+                }
+            } catch (\Exception $e) {
+                $respuesta['msg'] = $e->getMessage();
+                $respuesta['status'] = 0;
+            }
+        }else{
+            $respuesta['msg'] = "No se ha enviado ningun id de la collection";
+            $respuesta['status'] = 0;
         }
-            
         return response()->json($respuesta);
     }
 }
