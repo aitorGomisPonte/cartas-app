@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Card;
 use App\Models\Carta_pertenece;
+use App\Models\Carta_venta;
 use App\Models\Collection;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Stmt\TryCatch;
 use Carbon\Carbon;
@@ -91,7 +93,7 @@ class CardController extends Controller
         if(isset($datos->id_carta)){
             try {
                 $card = Card::where("id",$datos->id_carta)->first();
-                if(($card)){
+                if($card){
                     if($card->alta_card){
                         $respuesta['msg'] = "La carta ya esta dada de alta";
                         $respuesta['status'] = 1; 
@@ -132,24 +134,74 @@ class CardController extends Controller
                 $respuesta['msg'] = "Ha habido un fallo con los datos introducidos";
                 $respuesta['status'] = 0;          
             }else{
-                if((Collection::where("id",$datos->id_collection)->first())&&(Card::where("id",$datos->id_carta)->first())){
-                    if(Carta_pertenece::where("card_id",$datos->id_carta)->where("collection_id",$datos->id_collection)->first()){
-                        $respuesta['msg'] = "La carta ya pertenece a la collection";
-                        $respuesta['status'] = 0;
+                try {
+                    if((Collection::where("id",$datos->id_collection)->first())&&(Card::where("id",$datos->id_carta)->first())){
+                        if(Carta_pertenece::where("card_id",$datos->id_carta)->where("collection_id",$datos->id_collection)->first()){
+                            $respuesta['msg'] = "La carta ya pertenece a la collection";
+                            $respuesta['status'] = 0;
+                        }else{
+                            $pertenece = new Carta_pertenece();
+                            $pertenece->card_id = $datos->id_carta;
+                            $pertenece->collection_id = $datos->id_collection;
+                            $pertenece->save();
+                            $respuesta['msg'] = "La carta y la collection se han asociado correctamente";
+                            $respuesta['status'] = 1;
+                        }
                     }else{
-                        $pertenece = new Carta_pertenece();
-                        $pertenece->card_id = $datos->id_carta;
-                        $pertenece->collection_id = $datos->id_collection;
-                        $pertenece->save();
-                        $respuesta['msg'] = "La carta y la collection se han asociado correctamente";
-                        $respuesta['status'] = 1;
-                    }
-                }else{
-                    $respuesta['msg'] = "La carta o la collecion no existen";
+                        $respuesta['msg'] = "La carta o la collecion no existen";
+                        $respuesta['status'] = 0;
+                    }//code...
+                } catch (\Exception $e) {
+                    $respuesta['msg'] = $e->getMessage();
                     $respuesta['status'] = 0;
                 }
+                
             } 
         return response()->json($respuesta);
     }
+    public function PonerCartaVenta(Request $req){
+        $respuesta = ["status" => 1,"msg" => "test"];
 
+        $datos = $req->getContent();//Recibimos los datos por body
+        $datos = json_decode($datos);//Decodificamos los datos
+
+        $validator = Validator::make(json_decode($req->getContent(),true),[//Este es el validator, dodne comprobamos la validez de los datos introducidos en un json
+            'id_carta' => "required",//Obligatorio
+            'id_usuario' => "required",//Obligatorio, y que cumpla el enum 
+            'precio' => "required|integer",
+            'cantidad' => "required|integer",
+            ]);
+            //Comporbamos el estado del validador
+            if($validator->fails()){
+                $respuesta['msg'] = "Ha habido un fallo con los datos introducidos";
+                $respuesta['status'] = 0;          
+            }else{
+                try {
+                    $card = Card::where("id",$datos->id_carta)->first();
+                    if(($card)&&(Usuario::where("id",$datos->id_usuario)->first())){
+                        if($card->alta_card){
+                             $venta = new Carta_venta();
+                             $venta->id_usuario = $datos->id_usuario;
+                             $venta->id_carta = $datos->id_carta;
+                             $venta->precio_venta = $datos->precio;
+                             $venta->cantidad_venta = $datos->cantidad;
+                             $venta->save();
+                             $respuesta['msg'] = "La carta ".$card->id."se ha puesto a la venta";
+                             $respuesta['status'] = 0; 
+
+                        }else{
+                            $respuesta['msg'] = "La carta no est dada de alta";
+                            $respuesta['status'] = 0;   
+                        }
+                    }else{
+                        $respuesta['msg'] = "El id de usuario o carta no existe";
+                        $respuesta['status'] = 0; 
+                    }
+                } catch (\Exception $e) {
+                    $respuesta['msg'] = $e->getMessage();
+                    $respuesta['status'] = 0;
+                }
+            }   
+        return response()->json($respuesta);
+    }
 }

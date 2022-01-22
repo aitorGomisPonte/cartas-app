@@ -36,6 +36,7 @@ use App\Http\Controllers\CollectionController;
         Route::put('/crear',[CardController::class, 'CrearCard']);//->withoutMiddleware("check-user");
         Route::put('/darAlta',[CardController::class, 'DarAltaCarta']);
         Route::put('/asociarCarta',[CardController::class, 'AsociarCarta']);
+        Route::put('/ponerVenta',[CardController::class, 'PonerCartaVenta']);
     //  Route::get('/listar',[UsuarioController::class, 'listaEmpleados']);
     //  Route::get('/detalles',[UsuarioController::class, 'detallesEmpleado']);
     //  Route::get('/verPerfil',[UsuarioController::class, 'verPerfil'])->withoutMiddleware("check-user");
@@ -47,6 +48,7 @@ use App\Http\Controllers\CollectionController;
         Route::put('/crear',[CollectionController::class, 'CrearCollection']);//->withoutMiddleware("check-user");
         Route::put('/darAlta',[CollectionController::class, 'DarAltaCollection']);
         Route::get('/buscarNombre',[CollectionController::class, 'BuscarIdCollection']);
+       
                 //  Route::get('/listar',[UsuarioController::class, 'listaEmpleados']);
                 //  Route::get('/detalles',[UsuarioController::class, 'detallesEmpleado']);
                 //  Route::get('/verPerfil',[UsuarioController::class, 'verPerfil'])->withoutMiddleware("check-user");

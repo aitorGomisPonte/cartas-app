@@ -159,7 +159,5 @@ class CollectionController extends Controller
         }   
         return response()->json($respuesta);
     }
-    public function PonerCartaVenta(Request $req){
-        
-    }
+    
 }
