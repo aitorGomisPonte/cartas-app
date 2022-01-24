@@ -38,6 +38,7 @@ Route::middleware('check-token')->group(function(){
         Route::put('/darAlta',[CardController::class, 'DarAltaCarta'])->middleware('check-admin');
         Route::put('/asociarCarta',[CardController::class, 'AsociarCarta']);
         Route::put('/ponerVenta',[CardController::class, 'PonerCartaVenta']);
+        Route::get('/buscarCartaVenta',[CardController::class, 'BuscarCartasIdVender']);
         Route::get('/buscarCartas',[CardController::class, 'BuscarCartasId'])->withoutMiddleware("check-token");
     //  Route::get('/listar',[UsuarioController::class, 'listaEmpleados']);
     //  Route::get('/detalles',[UsuarioController::class, 'detallesEmpleado']);

@@ -105,6 +105,32 @@ class CardController extends Controller
 
         return response()->json($respuesta);
     }
+    public function BuscarCartasIdVender(Request $req){
+        $respuesta = ["status" => 1,"msg" => ""];
+
+        $datos = $req->getContent();//Recibimos los datos por body
+        $datos = json_decode($datos);//Decodificamos los datos
+
+        if(!(isset($datos->nombre_carta))){
+            $respuesta['msg'] = "No se han pasado los datos correctos";
+            $respuesta['status'] = 0;  
+        }else{
+            try {
+                $cartas = Card::select("id","nombre_card")->where("nombre_card","like","%".$datos->nombre_carta."%")->where("alta_card","true")->get();
+                if(sizeof($cartas) === 0){
+                    $respuesta['msg'] = "No existen cartas con ese nombre";
+                    $respuesta['status'] = 0;
+               }else{
+                    $respuesta['msg'] = "Los cartas son : ".$cartas;
+                    $respuesta['status'] = 0;
+                }
+            } catch (\Exception $e) {
+                $respuesta['msg'] = $e->getMessage();
+                $respuesta['status'] = 0; 
+            }
+        }
+        return response()->json($respuesta);
+    }
     public function DarAltaCarta(Request $req){
 
         $respuesta = ["status" => 1,"msg" => ""];
