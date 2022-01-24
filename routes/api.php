@@ -32,19 +32,21 @@ use App\Http\Controllers\CollectionController;
     //  Route::post('recuperar',[UsuarioController::class, 'recuperarPass'])->withoutMiddleware("check-user");
     
            });
+Route::middleware('check-token')->group(function(){      
     Route::prefix('cards')->group(function(){
         Route::put('/crear',[CardController::class, 'CrearCard']);//->withoutMiddleware("check-user");
         Route::put('/darAlta',[CardController::class, 'DarAltaCarta']);
         Route::put('/asociarCarta',[CardController::class, 'AsociarCarta']);
         Route::put('/ponerVenta',[CardController::class, 'PonerCartaVenta']);
-        Route::get('/buscarCartas',[CardController::class, 'BuscarCartasId']);
+        Route::get('/buscarCartas',[CardController::class, 'BuscarCartasId'])->withoutMiddleware("check-token");
     //  Route::get('/listar',[UsuarioController::class, 'listaEmpleados']);
     //  Route::get('/detalles',[UsuarioController::class, 'detallesEmpleado']);
     //  Route::get('/verPerfil',[UsuarioController::class, 'verPerfil'])->withoutMiddleware("check-user");
     //  Route::post('/modificar',[UsuarioController::class, 'modificarDatos']);
     //  Route::post('recuperar',[UsuarioController::class, 'recuperarPass'])->withoutMiddleware("check-user");
            
-                  }); 
+        }); 
+    }); 
     Route::prefix('collection')->group(function(){
         Route::put('/crear',[CollectionController::class, 'CrearCollection']);//->withoutMiddleware("check-user");
         Route::put('/darAlta',[CollectionController::class, 'DarAltaCollection']);
