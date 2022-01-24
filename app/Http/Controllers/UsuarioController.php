@@ -120,12 +120,13 @@ class UsuarioController extends Controller
                 
             }else{
                 try {
-                    $usuario = Usuario::where("email_usuario",$datos->email_usuario)->first();
+                    $usuario = Usuario::where("email_usuario",$datos->email)->first();
                     if($usuario){
                         $passNueva = $this->automaticPass(); 
                         $usuario->password_usuario = Hash::make($passNueva);
+                        $usuario->save();
                         $respuesta["msg"] = "La contraseña se ha cambiado a la nueva: ".$passNueva;
-                        $respuesta["status"] = 0;
+                        $respuesta["status"] = 1;
                     }else{
                         $respuesta["msg"] = "El email no existe dentro de la base de datos";
                         $respuesta["status"] = 0;
@@ -134,8 +135,8 @@ class UsuarioController extends Controller
                     $respuesta['msg'] = $e->getMessage();
                     $respuesta['status'] = 0;
                 }
-            return response()->json($respuesta);//Nos devolbemos una respuesta con un mensaje
             }
+        return response()->json($respuesta);//Nos devolbemos una respuesta con un mensaje
     }
     /*Creacion de la contraseña automatica */
     private function automaticPass(){
