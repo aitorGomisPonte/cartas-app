@@ -85,7 +85,8 @@ class CardController extends Controller
             //$cartas = Carta_venta::select("id","nombre_card")->where("nombre_card","like",$datos->nombre_carta)->orderBy("precio_venta")->get();
                 $cartas = DB::table('cards')
                 ->join('carta_ventas', 'cards.id', '=', 'carta_ventas.id_carta')
-                ->select('carta_ventas.id_carta', 'cards.nombre_card', 'carta_ventas.precio_venta')
+                ->join('usuarios', 'carta_ventas.id_usuario', '=', 'usuarios.id')
+                ->select('carta_ventas.id_carta', 'cards.nombre_card', 'carta_ventas.precio_venta','usuarios.nombre_usuario')
                 ->where("cards.nombre_card","like","%".$datos->nombre_carta."%")
                 ->orderBy("precio_venta")
                 ->get();
