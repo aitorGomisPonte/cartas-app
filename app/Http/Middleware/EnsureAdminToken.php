@@ -6,7 +6,7 @@ use Closure;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 
-class EnsureApiToken
+class EnsureAdminToken
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,6 @@ class EnsureApiToken
      */
     public function handle(Request $request, Closure $next)
     {
-        
         $respuesta = ["status" => 1,"msg" => ""];//Usamos esto para comunicarnos con el otro lado del servidor
         $datos = $request->getContent(); //Nos recibimos los datos por el body
         $datos = json_decode($datos); //Decodificamos el json para poder ver los distintos componentes
@@ -27,7 +26,12 @@ class EnsureApiToken
           if(isset($datos->api_token)){
                 $user = Usuario::Where("api_token",$datos->api_token)->first();
                 if($user){
-                    return $next($request);
+                    if($user->role_usuario == "Administrador"){
+                        return $next($request);
+                    }else{
+                        $respuesta['msg'] = "El usuario no teine permisos para ejecutar esta funcion";
+                        $respuesta['status'] = 0;
+                    }
                 }else{
                     $respuesta['msg'] = "El token no existe";
                     $respuesta['status'] = 0;
@@ -43,3 +47,4 @@ class EnsureApiToken
     return response()->json($respuesta);
     }
 }
+

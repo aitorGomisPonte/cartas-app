@@ -35,7 +35,7 @@ use App\Http\Controllers\CollectionController;
 Route::middleware('check-token')->group(function(){      
     Route::prefix('cards')->group(function(){
         Route::put('/crear',[CardController::class, 'CrearCard']);//->withoutMiddleware("check-user");
-        Route::put('/darAlta',[CardController::class, 'DarAltaCarta']);
+        Route::put('/darAlta',[CardController::class, 'DarAltaCarta'])->middleware('check-admin');
         Route::put('/asociarCarta',[CardController::class, 'AsociarCarta']);
         Route::put('/ponerVenta',[CardController::class, 'PonerCartaVenta']);
         Route::get('/buscarCartas',[CardController::class, 'BuscarCartasId'])->withoutMiddleware("check-token");
@@ -45,8 +45,9 @@ Route::middleware('check-token')->group(function(){
     //  Route::post('/modificar',[UsuarioController::class, 'modificarDatos']);
     //  Route::post('recuperar',[UsuarioController::class, 'recuperarPass'])->withoutMiddleware("check-user");
            
-        }); 
     }); 
+}); 
+Route::middleware('check-token')->group(function(){   
     Route::prefix('collection')->group(function(){
         Route::put('/crear',[CollectionController::class, 'CrearCollection']);//->withoutMiddleware("check-user");
         Route::put('/darAlta',[CollectionController::class, 'DarAltaCollection']);
@@ -58,5 +59,6 @@ Route::middleware('check-token')->group(function(){
                 //  Route::post('/modificar',[UsuarioController::class, 'modificarDatos']);
                 //  Route::post('recuperar',[UsuarioController::class, 'recuperarPass'])->withoutMiddleware("check-user");
                        
-        });                     
+    });   
+});                     
 //  });
