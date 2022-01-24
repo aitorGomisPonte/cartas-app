@@ -82,12 +82,14 @@ class CardController extends Controller
             $respuesta['status'] = 0;  
         }else{
             try {
-            //$cartas = Carta_venta::select("id","nombre_card")->where("nombre_card","like",$datos->nombre_carta)->orderBy("precio_venta")->get();
+                /* En esta secion unimos las tabla de cartas con la de usuarios y cartas en venta:
+                - juntamos las entradas cullos id conincidan en la tabl de cartas ventas con cartas
+                - juntamos los usuarios que coincidad con la tabla de cartas y la tabla de usuarios*/
                 $cartas = DB::table('cards')
                 ->join('carta_ventas', 'cards.id', '=', 'carta_ventas.id_carta')
                 ->join('usuarios', 'carta_ventas.id_usuario', '=', 'usuarios.id')
-                ->select('carta_ventas.id_carta', 'cards.nombre_card', 'carta_ventas.precio_venta','usuarios.nombre_usuario')
-                ->where("cards.nombre_card","like","%".$datos->nombre_carta."%")
+                ->select('carta_ventas.id_carta', 'cards.nombre_card', 'carta_ventas.precio_venta','usuarios.nombre_usuario')//Selecionamos
+                ->where("cards.nombre_card","like","%".$datos->nombre_carta."%")//Solo selecionamos las cuales coinciden con el nombre introducido
                 ->orderBy("precio_venta")
                 ->get();
                 if(sizeof($cartas) === 0){
