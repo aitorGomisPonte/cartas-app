@@ -60,7 +60,7 @@ class UsuarioController extends Controller
      -tercero: una vez comprobado, buscamos el email y la contraseña, y si estas coinsiden
      -cuarto: si es asi, nos creamos un nuevo token, guardado en la tabla para que se pueda usar durante un tiempo(en nustro caso no tenemos que se caduque, asi que sirve hasta que se ha ga otro login)
      -quinto: */
-     public function LogIn(Request $req){
+    public function LogIn(Request $req){
 
         $respuesta = ["status" => 1,"msg" => ""];//Usamos esto para comunicarnos con el otro lado del servidor
 
@@ -103,6 +103,12 @@ class UsuarioController extends Controller
         }
     return md5($tokenAux);//Encriptamos con md5 el token para no tener problams en los json o rutas 
     }
+    /*Funcion encargada de recuperar la contraseña:
+     -primero: comprobamos que el email exista y sea unico
+     -segundo: comprobamos que el usuario exista
+     -tercero: al ser asi, nos creamos una nueva contraseña
+     -cuarto: la guardamos encriptada dentro de la base de datos
+     -quinto: la enviamos de vuelta para ser mostrada por pantalla */
     public function RecuperarPassword(Request $req){
         $respuesta = ["status" => 1,"msg" => ""];//Usamos esto para comunicarnos con el otro lado del servidor
 

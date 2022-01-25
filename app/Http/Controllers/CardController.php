@@ -107,6 +107,11 @@ class CardController extends Controller
 
         return response()->json($respuesta);
     }
+    /*Funcion encargda de buscar el id de la carta para los vendedores
+     -Recibe: nombre de la carta
+      -primero: busca la carta dentro de la base de datos
+      -segundo: busca los ids correspondientes con la busqueda
+     -Devuelve: el id de las cartas  */
     public function BuscarCartasIdVender(Request $req){
         $respuesta = ["status" => 1,"msg" => ""];
 
@@ -133,6 +138,10 @@ class CardController extends Controller
         }
         return response()->json($respuesta);
     }
+    /*Funcion encargada de dar de alta las cartas, solo accesible si eres admin
+     -primero: comprueba que la carta exista
+     -segundo: comprueba que la cart no este dada de alta
+     -tercero: da de alta la carta, y guarda la fecha de alta */
     public function DarAltaCarta(Request $req){
 
         $respuesta = ["status" => 1,"msg" => ""];
@@ -148,7 +157,7 @@ class CardController extends Controller
                         $respuesta['status'] = 1; 
                     }else{
                         $card->alta_card = true;
-                        $card->fecha_alta_card = Carbon::now();
+                        $card->fecha_alta_card = Carbon::now();//Carbon.now()nos permite guardar la fecha actual en la que nos encontramos
                         $card->save();
                         $respuesta['msg'] = "La carta se ha dado de alta";
                         $respuesta['status'] = 2;  
@@ -167,6 +176,11 @@ class CardController extends Controller
         }
         return response()->json($respuesta);
     }
+    /*Funcion encargada de asociar cartas a collectiones
+     -prmimero: validamos los datos que hemos recibido
+     -segundo: comprobamos qu la carta y la collection existn
+     -tercero: comprobamos que la carta no pertenezca ya a la collection
+     -cuerto: si no es asi, nos creamos un nuevo objeto de pertenencia y lo gaurdamos */
     public function AsociarCarta(Request $req){
 
         $respuesta = ["status" => 1,"msg" => ""];
@@ -208,6 +222,12 @@ class CardController extends Controller
             } 
         return response()->json($respuesta);
     }
+    /*Funcion encargda de poner cartas a la venta:
+    Recibe: id_carta, id_usuario, precio y cantidad
+     -primero: valdamos los datos que se nos han pasado
+     -segundo: comprobamos que la carta y usuario existan
+     -tercero: comprobamos que la carta este dada de alta
+     -cuarto: creamos un nuevo objeto de venta */
     public function PonerCartaVenta(Request $req){
         $respuesta = ["status" => 1,"msg" => "test"];
 

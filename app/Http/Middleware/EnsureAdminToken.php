@@ -15,6 +15,7 @@ class EnsureAdminToken
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
+    /*Este middlaware se encarga de comprobar que sea un administrador el que esta haciendo la peticion. */
     public function handle(Request $request, Closure $next)
     {
         $respuesta = ["status" => 1,"msg" => ""];//Usamos esto para comunicarnos con el otro lado del servidor
