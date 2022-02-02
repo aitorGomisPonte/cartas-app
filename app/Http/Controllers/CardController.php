@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Stmt\TryCatch;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CardController extends Controller
 {
@@ -121,19 +122,23 @@ class CardController extends Controller
         if(!(isset($datos->nombre_carta))){
             $respuesta['msg'] = "No se han pasado los datos correctos";
             $respuesta['status'] = 0;  
+            Log::warning("No se ha pasado un nombre de carta");
         }else{
             try {
                 $cartas = Card::select("id","nombre_card")->where("nombre_card","like","%".$datos->nombre_carta."%")->where("alta_card","true")->get();
                 if(sizeof($cartas) === 0){
                     $respuesta['msg'] = "No existen cartas con ese nombre";
                     $respuesta['status'] = 0;
+                    Log::error("La carta que se ha pasado no existe");
                }else{
                     $respuesta['msg'] = "Los cartas son : ".$cartas;
                     $respuesta['status'] = 0;
+                    Log::info("la funcion se ha ejecutado correctamente");
                 }
             } catch (\Exception $e) {
                 $respuesta['msg'] = $e->getMessage();
                 $respuesta['status'] = 0; 
+                Log::critical("Ha habido una perdida de coneccion con la base de datos");
             }
         }
         return response()->json($respuesta);
@@ -243,7 +248,8 @@ class CardController extends Controller
             //Comporbamos el estado del validador
             if($validator->fails()){
                 $respuesta['msg'] = "Ha habido un fallo con los datos introducidos";
-                $respuesta['status'] = 0;          
+                $respuesta['status'] = 0;
+
             }else{
                 try {
                     $card = Card::where("id",$datos->id_carta)->first();

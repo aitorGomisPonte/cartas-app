@@ -2,9 +2,11 @@
 
 namespace App\Http\Middleware;
 
+
 use Closure;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EnsureApiToken
 {
@@ -28,17 +30,21 @@ class EnsureApiToken
                 $user = Usuario::Where("api_token",$datos->api_token)->first();
                 if($user){
                     return $next($request);
+                    Log::info("Se ha pasado el middlaware corerctamente");
                 }else{
                     $respuesta['msg'] = "El token no existe";
                     $respuesta['status'] = 0;
+                    Log::error("el APi-token no existe");
                 }
           }else{
                 $respuesta['msg'] = "No se han pasado los datos adecuados";
                 $respuesta['status'] = 0;
+                Log::warning("No se ha passado ningun token");
           }
        } catch (\Exception $e) {
           $respuesta['msg'] = $e->getMessage();
           $respuesta['status'] = 0;
+          Log::critical("Ha habido una perdida de coneccion con la base de datos");
        }          
     return response()->json($respuesta);
     }
