@@ -29,8 +29,8 @@ class EnsureApiToken
           if(isset($datos->api_token)){
                 $user = Usuario::Where("api_token",$datos->api_token)->first();
                 if($user){
-                    return $next($request);
                     Log::info("Se ha pasado el middlaware corerctamente");
+                    return $next($request);                    
                 }else{
                     $respuesta['msg'] = "El token no existe";
                     $respuesta['status'] = 0;
